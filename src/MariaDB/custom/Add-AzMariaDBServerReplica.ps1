@@ -18,7 +18,7 @@ FIREWALLRULE <IFirewallRule[]>: Gets or sets firewall rules
 .Link
 https://docs.microsoft.com/en-us/powershell/module/az.MariaDb/new-azMariaDbmember
 #>
-function New-AzMariaDBServerReplica {
+function Add-AzMariaDBServerReplica {
     [OutputType([Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.Api20180601Preview.IServer])]
     [CmdletBinding(DefaultParameterSetName='CreateExpanded', PositionalBinding=$false, SupportsShouldProcess, ConfirmImpact='Medium')]
     [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Profile('latest-2019-04-30')]
@@ -51,6 +51,7 @@ function New-AzMariaDBServerReplica {
         ${SubscriptionId},
     
         #region ServerForCreate
+        [Parameter(Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [System.String]
         # The location the resource resides in.
@@ -186,71 +187,71 @@ function New-AzMariaDBServerReplica {
     
             #region ServerForCreate
             if ($PSBoundParameters.ContainsKey('Location')) {
-                $Parameter.Property.Location = $PSBoundParameters['Location']
+                $Parameter.Location = $PSBoundParameters['Location']
                 $PSBoundParameters.Remove('Location')
             }
-    
+
             if ($PSBoundParameters.ContainsKey('SkuCapacity')) {
-                $Parameter.Property.SkuCapacity = $PSBoundParameters['SkuCapacity']
+                $Parameter.SkuCapacity = $PSBoundParameters['SkuCapacity']
                 $PSBoundParameters.Remove('SkuCapacity')
             }
-    
+
             if ($PSBoundParameters.ContainsKey('SkuFamily')) {
-                $Parameter.Property.SkuFamily = $PSBoundParameters['SkuFamily']
+                $Parameter.SkuFamily = $PSBoundParameters['SkuFamily']
                 $PSBoundParameters.Remove('SkuFamily')
             }
-    
+
             if ($PSBoundParameters.ContainsKey('SkuTier')) {
-                $Parameter.Property.SkuTier = $PSBoundParameters['SkuTier']
+                $Parameter.SkuTier = $PSBoundParameters['SkuTier']
                 $PSBoundParameters.Remove('SkuTier')
             }
-    
+
             if ($PSBoundParameters.ContainsKey('SkuName')) {
-                $Parameter.Property.SkuName = $PSBoundParameters['SkuName']
+                $Parameter.SkuName = $PSBoundParameters['SkuName']
                 $PSBoundParameters.Remove('SkuName')
             }
-    
+
             if ($PSBoundParameters.ContainsKey('SkuSize')) {
-                $Parameter.Property.SkuSize = $PSBoundParameters['SkuSize']
+                $Parameter.SkuSize = $PSBoundParameters['SkuSize']
                 $PSBoundParameters.Remove('SkuSize')
             }
 
             if ($PSBoundParameters.ContainsKey('SslEnforcement')) {
-                $Parameter.Property.SslEnforcement = $PSBoundParameters['SslEnforcement']
+                $Parameter.SslEnforcement = $PSBoundParameters['SslEnforcement']
                 $PSBoundParameters.Remove('SslEnforcement')
             }
             else
             {
-                $Parameter.Property.SslEnforcement = [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Support.SslEnforcementEnum]::Enable
+                $Parameter.SslEnforcement = [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Support.SslEnforcementEnum]::Enable
             }
-    
+
             if ($PSBoundParameters.ContainsKey('StorageProfileBackupRetentionDay')) {
-                $Parameter.Property.StorageProfileBackupRetentionDay = $PSBoundParameters['StorageProfileBackupRetentionDay']
+                $Parameter.StorageProfileBackupRetentionDay = $PSBoundParameters['StorageProfileBackupRetentionDay']
                 $PSBoundParameters.Remove('StorageProfileBackupRetentionDay')
             }
-    
+
             if ($PSBoundParameters.ContainsKey('StorageProfileGeoRedundantBackup')) {
-                $Parameter.Property.StorageProfileGeoRedundantBackup = $PSBoundParameters['StorageProfileGeoRedundantBackup']
+                $Parameter.StorageProfileGeoRedundantBackup = $PSBoundParameters['StorageProfileGeoRedundantBackup']
                 $PSBoundParameters.Remove('StorageProfileGeoRedundantBackup')
             }
-    
+
             if ($PSBoundParameters.ContainsKey('StorageProfileStorageAutogrow')) {
-                $Parameter.Property.StorageProfileStorageAutogrow = $PSBoundParameters['StorageProfileStorageAutogrow']
+                $Parameter.StorageProfileStorageAutogrow = $PSBoundParameters['StorageProfileStorageAutogrow']
                 $PSBoundParameters.Remove('StorageProfileStorageAutogrow')
             }
-    
+
             if ($PSBoundParameters.ContainsKey('StorageProfileStorageMb')) {
-                $Parameter.Property.StorageProfileStorageMb = $PSBoundParameters['StorageProfileStorageMb']
+                $Parameter.StorageProfileStorageMb = $PSBoundParameters['StorageProfileStorageMb']
                 $PSBoundParameters.Remove('StorageProfileStorageMb')
             }
-    
+
             if ($PSBoundParameters.ContainsKey('Tag')) {
-                $Parameter.Property.Tag = $PSBoundParameters['Tag']
+                $Parameter.Tag = $PSBoundParameters['Tag']
                 $PSBoundParameters.Remove('Tag')
             }
-    
+
             if ($PSBoundParameters.ContainsKey('Version')) {
-                $Parameter.Property.Version = $PSBoundParameters['Version']
+                $Parameter.Version = $PSBoundParameters['Version']
                 $PSBoundParameters.Remove('Version')
             }
             #endregion ServerForCreate
