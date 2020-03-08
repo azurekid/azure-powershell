@@ -49,53 +49,50 @@ https://docs.microsoft.com/en-us/powershell/module/az.mariadb/new-azmariadbvnetr
 #>
 function New-AzMariaDbVNetRule {
     [OutputType([Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.Api20180601Preview.IVirtualNetworkRule])]
-    [CmdletBinding(DefaultParameterSetName='CreateExpanded', PositionalBinding=$false, SupportsShouldProcess, ConfirmImpact='Medium')]
+    [CmdletBinding(DefaultParameterSetName='ServerName', PositionalBinding=$false, SupportsShouldProcess, ConfirmImpact='Medium')]
     [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Profile('latest-2019-04-30')]
     param(
-        [Parameter(ParameterSetName='Create', Mandatory)]
-        [Parameter(ParameterSetName='CreateExpanded', Mandatory)]
-        [Alias('VirtualNetworkRuleName')]
+        [Parameter(Mandatory)]
+        [Alias('VNetRuleName')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [System.String]
         # The name of the virtual network rule.
         ${Name},
     
-        [Parameter(ParameterSetName='Create', Mandatory)]
-        [Parameter(ParameterSetName='CreateExpanded', Mandatory)]
+        [Parameter(ParameterSetName='ServerName', Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [System.String]
         # The name of the resource group that contains the resource.
         # You can obtain this value from the Azure Resource Manager API or the portal.
         ${ResourceGroupName},
     
-        [Parameter(ParameterSetName='Create', Mandatory)]
-        [Parameter(ParameterSetName='CreateExpanded', Mandatory)]
+        [Parameter(ParameterSetName='ServerName', Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [System.String]
         # The name of the server.
         ${ServerName},
     
-        [Parameter(ParameterSetName='CreateViaIdentity', Mandatory, ValueFromPipeline)]
-        [Parameter(ParameterSetName='CreateViaIdentityExpanded', Mandatory, ValueFromPipeline)]
+        [Parameter(ParameterSetName='ServerObject', Mandatory, ValueFromPipeline)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
-        [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.IMariaDbIdentity]
+        [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.Api20180601Preview.IServer]
         # Identity Parameter
         # To construct, see NOTES section for INPUTOBJECT properties and create a hash table.
         ${InputObject},
     
-        [Parameter(ParameterSetName='Create', Mandatory, ValueFromPipeline)]
-        [Parameter(ParameterSetName='CreateViaIdentity', Mandatory, ValueFromPipeline)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.Api20180601Preview.IVirtualNetworkRule]
         # A virtual network rule.
         # To construct, see NOTES section for VNETRULE properties and create a hash table.
         ${VNetRule},
     
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [System.Management.Automation.SwitchParameter]
         # Create firewall rule before the virtual network has vnet service endpoint enabled.
         ${IgnoreMissingVnetServiceEndpoint},
     
+        [Parameter(Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [System.String]
         # The ARM resource id of the virtual network subnet.

@@ -52,39 +52,46 @@ function Update-AzMariaDbConfiguration {
     [CmdletBinding(DefaultParameterSetName='UpdateExpanded', PositionalBinding=$false, SupportsShouldProcess, ConfirmImpact='Medium')]
     [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Profile('latest-2019-04-30')]
     param(
+        [Parameter(ParameterSetName='ServerName', Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [System.String]
         # The name of the resource group that contains the resource.
         # You can obtain this value from the Azure Resource Manager API or the portal.
         ${ResourceGroupName},
     
+        [Parameter(ParameterSetName='ServerName', Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [System.String]
         # The name of the server.
         ${ServerName},
     
+        [Parameter(ParameterSetName='ServerName', Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Runtime.DefaultInfo(Script='(Get-AzContext).Subscription.Id')]
         [System.String]
         # The subscription ID that identifies an Azure subscription.
         ${SubscriptionId},
     
+        [Parameter(ParameterSetName='ServerObject', Mandatory, ValueFromPipeline)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.IMariaDbIdentity]
         # Identity Parameter
         # To construct, see NOTES section for INPUTOBJECT properties and create a hash table.
         ${InputObject},
     
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [System.Collections.Hashtable]
         ${Configuration},
 
+        [Parameter()]
         [Alias('ConfigurationName')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [System.String]
         # The name of the server configuration.
         ${Name},
     
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [System.String]
         # Value of the configuration.

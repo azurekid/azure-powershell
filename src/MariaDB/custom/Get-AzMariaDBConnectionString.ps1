@@ -32,31 +32,31 @@ https://docs.microsoft.com/en-us/powershell/module/az.mariadb/get-azmariadbconne
 #>
 function Get-AzMariaDbConnectionString {
     [OutputType([System.String])]
-    [CmdletBinding(PositionalBinding=$false)]
+    [CmdletBinding(DefaultParameterSetName='ServerName', PositionalBinding=$false)]
     [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Profile('latest-2019-04-30')]
     param(
-        [Parameter()]
+        [Parameter(ParameterSetName='Get', Mandatory)]
         [Alias('ServerName')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [System.String]
         # The name of the server.
         ${Name},
     
-        [Parameter()]
+        [Parameter(ParameterSetName='ServerName', Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [System.String]
         # The name of the resource group that contains the resource.
         # You can obtain this value from the Azure Resource Manager API or the portal.
         ${ResourceGroupName},
     
-        [Parameter()]
+        [Parameter(ParameterSetName='ServerName')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Runtime.DefaultInfo(Script='(Get-AzContext).Subscription.Id')]
         [System.String[]]
         # The subscription ID that identifies an Azure subscription.
         ${SubscriptionId},
     
-        [Parameter(ValueFromPipeline)]
+        [Parameter(ParameterSetName='ServerObject', ValueFromPipeline)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.IMariaDbIdentity]
         # Identity Parameter

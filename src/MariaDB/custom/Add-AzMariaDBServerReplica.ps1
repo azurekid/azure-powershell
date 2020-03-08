@@ -20,7 +20,7 @@ https://docs.microsoft.com/en-us/powershell/module/az.MariaDb/new-azMariaDbmembe
 #>
 function Add-AzMariaDBServerReplica {
     [OutputType([Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.Api20180601Preview.IServer])]
-    [CmdletBinding(DefaultParameterSetName='CreateExpanded', PositionalBinding=$false, SupportsShouldProcess, ConfirmImpact='Medium')]
+    [CmdletBinding(DefaultParameterSetName='SourceServerId', PositionalBinding=$false, SupportsShouldProcess, ConfirmImpact='Medium')]
     [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Profile('latest-2019-04-30')]
     param(
         [Parameter(Mandatory)]
@@ -29,11 +29,17 @@ function Add-AzMariaDBServerReplica {
         # Replica name
         ${Name},
 
-        [Parameter(Mandatory)]
+        [Parameter(ParameterSetName='SourceServerId', Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [System.String]
-        # The master server id to create replica from.
+        # The source server id to restore from.
         ${SourceServerId},
+
+        [Parameter(ParameterSetName='ServerObject', Mandatory, ValueFromPipeline)]
+        [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
+        [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.Api20180601Preview.IServer]
+        # The source server object to restore from.
+        ${InputObject},
     
         [Parameter(Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
@@ -57,61 +63,73 @@ function Add-AzMariaDBServerReplica {
         # The location the resource resides in.
         ${Location},
 
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [int]
         # The scale up/out capacity, representing server's compute units.
         ${SkuCapacity},
 
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [System.String]
         # The family of hardware.
         ${SkuFamily},
 
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Support.SkuTier]
         # The tier of the particular SKU, e.g. Basic.
         ${SkuTier},
 
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [System.String]
         # The name of the sku, typically, tier + family + cores, e.g. B_Gen4_1, GP_Gen5_8.
         ${SkuName},
 
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [System.String]
         # The size code, to be interpreted by resource as appropriate.
         ${SkuSize},
 
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Support.SslEnforcementEnum]
         # Enable ssl enforcement or not when connect to server.
         ${SslEnforcement},
 
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [int]
         # Backup retention days for the server
         ${StorageProfileBackupRetentionDay},
 
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Support.GeoRedundantBackup]
         # Enable Geo-redundant or not for server backup.
         ${StorageProfileGeoRedundantBackup},
 
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Support.StorageAutogrow]
         # Enable Storage Auto Grow.
         ${StorageProfileStorageAutogrow},
 
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [int]
         # Max storage allowed for a server.
         ${StorageProfileStorageMb},
 
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Support.ServerVersion]
         # Application-specific metadata in the form of key-value pairs.
         ${Tag},
 
+        [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Support.ServerVersion]
         # Server version
@@ -258,8 +276,14 @@ function Add-AzMariaDBServerReplica {
 
             $Parameter.CreateMode = [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Support.CreateMode]::Replica
 
-            $Parameter.Property.SourceServerId = $PSBoundParameters['SourceServerId']
-            $PSBoundParameters.Remove('SourceServerId')
+            if ($PSBoundParameters.ContainsKey('SourceServerId')) {
+                $Parameter.Property.SourceServerId = $PSBoundParameters['SourceServerId']
+                $PSBoundParameters.Remove('SourceServerId')
+            }
+            if ($PSBoundParameters.ContainsKey('InputObject')) {
+                $Parameter.Property.SourceServerId = $InputObject.Id
+                $PSBoundParameters.Remove('InputObject')
+            }
 
             $PSBoundParameters.Add('Parameter', $Parameter)
     
