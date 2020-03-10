@@ -26,7 +26,7 @@ function New-AzMariaDBServer {
         [Parameter(Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [System.String]
-        # MariaDb member name.
+        # MariaDb server name.
         ${Name},
     
         [Parameter(Mandatory)]
@@ -45,7 +45,7 @@ function New-AzMariaDBServer {
         ${SubscriptionId},
 
         #region ServerForCreate
-        [Parameter()]
+        [Parameter(Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [System.String]
         # The location the resource resides in.
@@ -125,15 +125,13 @@ function New-AzMariaDBServer {
         #endregion ServerForCreate
 
         #region ServerPropertiesForDefaultCreate
-        [Parameter(ParameterSetName='CreateExpanded', Mandatory)]
-        [Parameter(ParameterSetName='CreateViaIdentityExpanded', Mandatory)]
+        [Parameter(Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [System.String]
         # The mode to create a new server.
         ${AdministratorLogin},
     
-        [Parameter(ParameterSetName='CreateExpanded', Mandatory)]
-        [Parameter(ParameterSetName='CreateViaIdentityExpanded', Mandatory)]
+        [Parameter(Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
         [System.Security.SecureString]
         # The mode to create a new server.
@@ -208,37 +206,37 @@ function New-AzMariaDBServer {
             #region ServerForCreate
             if ($PSBoundParameters.ContainsKey('Location')) {
                 $Parameter.Location = $PSBoundParameters['Location']
-                $PSBoundParameters.Remove('Location')
+                $null = $PSBoundParameters.Remove('Location')
             }
 
             if ($PSBoundParameters.ContainsKey('SkuCapacity')) {
                 $Parameter.SkuCapacity = $PSBoundParameters['SkuCapacity']
-                $PSBoundParameters.Remove('SkuCapacity')
+                $null = $PSBoundParameters.Remove('SkuCapacity')
             }
 
             if ($PSBoundParameters.ContainsKey('SkuFamily')) {
                 $Parameter.SkuFamily = $PSBoundParameters['SkuFamily']
-                $PSBoundParameters.Remove('SkuFamily')
+                $null = $PSBoundParameters.Remove('SkuFamily')
             }
 
             if ($PSBoundParameters.ContainsKey('SkuTier')) {
                 $Parameter.SkuTier = $PSBoundParameters['SkuTier']
-                $PSBoundParameters.Remove('SkuTier')
+                $null = $PSBoundParameters.Remove('SkuTier')
             }
 
             if ($PSBoundParameters.ContainsKey('SkuName')) {
                 $Parameter.SkuName = $PSBoundParameters['SkuName']
-                $PSBoundParameters.Remove('SkuName')
+                $null = $PSBoundParameters.Remove('SkuName')
             }
 
             if ($PSBoundParameters.ContainsKey('SkuSize')) {
                 $Parameter.SkuSize = $PSBoundParameters['SkuSize']
-                $PSBoundParameters.Remove('SkuSize')
+                $null = $PSBoundParameters.Remove('SkuSize')
             }
 
             if ($PSBoundParameters.ContainsKey('SslEnforcement')) {
                 $Parameter.SslEnforcement = $PSBoundParameters['SslEnforcement']
-                $PSBoundParameters.Remove('SslEnforcement')
+                $null = $PSBoundParameters.Remove('SslEnforcement')
             }
             else
             {
@@ -247,43 +245,43 @@ function New-AzMariaDBServer {
 
             if ($PSBoundParameters.ContainsKey('StorageProfileBackupRetentionDay')) {
                 $Parameter.StorageProfileBackupRetentionDay = $PSBoundParameters['StorageProfileBackupRetentionDay']
-                $PSBoundParameters.Remove('StorageProfileBackupRetentionDay')
+                $null = $PSBoundParameters.Remove('StorageProfileBackupRetentionDay')
             }
 
             if ($PSBoundParameters.ContainsKey('StorageProfileGeoRedundantBackup')) {
                 $Parameter.StorageProfileGeoRedundantBackup = $PSBoundParameters['StorageProfileGeoRedundantBackup']
-                $PSBoundParameters.Remove('StorageProfileGeoRedundantBackup')
+                $null = $PSBoundParameters.Remove('StorageProfileGeoRedundantBackup')
             }
 
             if ($PSBoundParameters.ContainsKey('StorageProfileStorageAutogrow')) {
                 $Parameter.StorageProfileStorageAutogrow = $PSBoundParameters['StorageProfileStorageAutogrow']
-                $PSBoundParameters.Remove('StorageProfileStorageAutogrow')
+                $null = $PSBoundParameters.Remove('StorageProfileStorageAutogrow')
             }
 
             if ($PSBoundParameters.ContainsKey('StorageProfileStorageMb')) {
                 $Parameter.StorageProfileStorageMb = $PSBoundParameters['StorageProfileStorageMb']
-                $PSBoundParameters.Remove('StorageProfileStorageMb')
+                $null = $PSBoundParameters.Remove('StorageProfileStorageMb')
             }
 
             if ($PSBoundParameters.ContainsKey('Tag')) {
                 $Parameter.Tag = $PSBoundParameters['Tag']
-                $PSBoundParameters.Remove('Tag')
+                $null = $PSBoundParameters.Remove('Tag')
             }
 
             if ($PSBoundParameters.ContainsKey('Version')) {
                 $Parameter.Version = $PSBoundParameters['Version']
-                $PSBoundParameters.Remove('Version')
+                $null = $PSBoundParameters.Remove('Version')
             }
             #endregion ServerForCreate
 
             $Parameter.CreateMode = [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Support.CreateMode]::Default
             $Parameter.Property.AdministratorLogin = $PSBoundParameters['AdministratorLogin']
-            $PSBoundParameters.Remove('AdministratorLogin')
+            $null = $PSBoundParameters.Remove('AdministratorLogin')
 
             $Parameter.Property.AdministratorLoginPassword = $PSBoundParameters['AdministratorLoginPassword']
-            $PSBoundParameters.Remove('AdministratorLoginPassword')
+            $null = $PSBoundParameters.Remove('AdministratorLoginPassword')
 
-            $PSBoundParameters.Add('Parameter', $Parameter)
+            $null = $PSBoundParameters.Add('Parameter', $Parameter)
     
             Az.MariaDb.internal\New-AzMariaDbServer @PSBoundParameters
           } catch {

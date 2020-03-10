@@ -67,7 +67,7 @@ function Get-AzMariaDbConnectionString {
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [Validateset('ADO.NET', 'JDBC', 'Node.js', 'PHP', 'Python', 'Ruby', 'WebApp')]
         [string]
-        ${ProgramLanguage},
+        ${Client},
     
         [Parameter()]
         [Alias('AzureRMContext', 'AzureCredential')]
@@ -118,13 +118,13 @@ function Get-AzMariaDbConnectionString {
     )
     
     process {
-        $null = $PSBoundParameters.Remove('ProgramLanguage')
+        $null = $PSBoundParameters.Remove('Client')
         $MariaDB = Get-AzMariaDbServer @PSBoundParameters
         $DBHost = $MariaDB.FullyQualifiedDomainName
         $DBPort = 3306
         $AdminName = $MariaDB.AdministratorLogin
         $MariaDBName = $MariaDB.Name
-        $SslConnectionString = GetConnectionStringSslPart -ProgramLanguage $ProgramLanguage -SslEnforcement $MariaDB.SslEnforcement
+        $SslConnectionString = GetConnectionStringSslPart -Client $Client -SslEnforcement $MariaDB.SslEnforcement
         $ConnectionStringMap = @{
             'ADO.NET' = "Server=${DBHost}; Port=${DBPort}; Database={your_database}; Uid=${AdminName}@${MariaDBName}; Pwd={your_password}; $SslConnectionString"
             'JDBC' = "String url =`"jdbc:mariadb://${DBHost}:${DBPort}/{your_database}$SslConnectionString`"; myDbConn = DriverManager.getConnection(url, `"${AdminName}@${MariaDBName}`", {your_password});"
@@ -134,7 +134,7 @@ function Get-AzMariaDbConnectionString {
             'Ruby' = "client = Mysql2::Client.new(username: `"${AdminName}@${MariaDBName}`", password: {your_password}, database: {your_database}, host: `"${DBHost}`", port: ${DBPort}$SslConnectionString)"
             'WebApp' = "Database={your_database}; Data Source=${DBHost}; User Id=${AdminName}@${MariaDBName}; Password={your_password}"
         }
-        return $ConnectionStringMap[$ProgramLanguage]
+        return $ConnectionStringMap[$Client]
     }
 }
 
@@ -142,7 +142,7 @@ function GetConnectionStringSslPart {
     param(
         [Parameter()]
         [string]
-        ${ProgramLanguage},
+        ${Client},
         [Parameter()]
         [string]
         ${SslEnforcement}
@@ -157,7 +157,7 @@ function GetConnectionStringSslPart {
         'WebApp' = ''
     }
     if ($MariaDB.SslEnforcement -eq 'Enabled') {
-        return $SslEnforcementTemplateMap[$ProgramLanguage]
+        return $SslEnforcementTemplateMap[$Client]
     }
     return ''
 }
