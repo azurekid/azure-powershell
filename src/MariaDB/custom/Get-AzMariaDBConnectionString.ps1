@@ -35,7 +35,7 @@ function Get-AzMariaDbConnectionString {
     [CmdletBinding(DefaultParameterSetName='ServerName', PositionalBinding=$false)]
     [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Profile('latest-2019-04-30')]
     param(
-        [Parameter(ParameterSetName='Get', Mandatory)]
+        [Parameter(ParameterSetName='ServerName', Mandatory)]
         [Alias('ServerName')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [System.String]
@@ -52,7 +52,7 @@ function Get-AzMariaDbConnectionString {
         [Parameter(ParameterSetName='ServerName')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Runtime.DefaultInfo(Script='(Get-AzContext).Subscription.Id')]
-        [System.String[]]
+        [System.String]
         # The subscription ID that identifies an Azure subscription.
         ${SubscriptionId},
     
@@ -124,7 +124,22 @@ function Get-AzMariaDbConnectionString {
         $DBPort = 3306
         $AdminName = $MariaDB.AdministratorLogin
         $MariaDBName = $MariaDB.Name
-        $SslConnectionString = GetConnectionStringSslPart -Client $Client -SslEnforcement $MariaDB.SslEnforcement
+
+        $SslEnforcementTemplateMap = @{
+            'ADO.NET' = 'SslMode=Preferred;'
+            'JDBC' = '?useSSL=true'
+            'Node.js' = ', ssl:{ca:fs.readFileSync({ca-cert filename})}'
+            'PHP' = 'mysqli_ssl_set($con, NULL, NULL, {ca-cert filename}, NULL, NULL);'
+            'Python' = ', ssl_ca={ca-cert filename}, ssl_verify_cert=true'
+            'Ruby' = ', sslca:{ca-cert filename}, sslverify:false, sslcipher:"AES256-SHA"'
+            'WebApp' = ''
+        }
+        if ($MariaDB.SslEnforcement -eq 'Enabled') {
+            $SslConnectionString = $SslEnforcementTemplateMap[$Client]
+        } else {
+            $SslConnectionString = ''
+        }
+
         $ConnectionStringMap = @{
             'ADO.NET' = "Server=${DBHost}; Port=${DBPort}; Database={your_database}; Uid=${AdminName}@${MariaDBName}; Pwd={your_password}; $SslConnectionString"
             'JDBC' = "String url =`"jdbc:mariadb://${DBHost}:${DBPort}/{your_database}$SslConnectionString`"; myDbConn = DriverManager.getConnection(url, `"${AdminName}@${MariaDBName}`", {your_password});"
@@ -136,28 +151,4 @@ function Get-AzMariaDbConnectionString {
         }
         return $ConnectionStringMap[$Client]
     }
-}
-
-function GetConnectionStringSslPart {
-    param(
-        [Parameter()]
-        [string]
-        ${Client},
-        [Parameter()]
-        [string]
-        ${SslEnforcement}
-    )
-    $SslEnforcementTemplateMap = @{
-        'ADO.NET' = 'SslMode=Preferred;'
-        'JDBC' = '?useSSL=true'
-        'Node.js' = ', ssl:{ca:fs.readFileSync({ca-cert filename})}'
-        'PHP' = 'mysqli_ssl_set($con, NULL, NULL, {ca-cert filename}, NULL, NULL);'
-        'Python' = ', ssl_ca={ca-cert filename}, ssl_verify_cert=true'
-        'Ruby' = ', sslca:{ca-cert filename}, sslverify:false, sslcipher:"AES256-SHA"'
-        'WebApp' = ''
-    }
-    if ($MariaDB.SslEnforcement -eq 'Enabled') {
-        return $SslEnforcementTemplateMap[$Client]
-    }
-    return ''
 }

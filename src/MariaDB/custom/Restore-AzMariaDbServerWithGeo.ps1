@@ -4,7 +4,7 @@ Create a MariaDb member.
 .Description
 Create a MariaDb member.
 .Example
-To view examples, please use the -Online parameter with Get-Help or navigate to: https://docs.microsoft.com/en-us/powershell/module/az.MariaDb/Restore-AzMariaDBServerWith
+To view examples, please use the -Online parameter with Get-Help or navigate to: https://docs.microsoft.com/en-us/powershell/module/az.MariaDb/Restore-AzMariaDBServerWithGeo
 .Outputs
 Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.Api20180601Preview.IMariaDbMember
 .Notes
@@ -16,9 +16,9 @@ FIREWALLRULE <IFirewallRule[]>: Gets or sets firewall rules
   [RuleName <String>]: Gets or sets the name of the firewall rules.
   [StartIPAddress <String>]: Gets or sets the start IP address of the firewall rule range.
 .Link
-https://docs.microsoft.com/en-us/powershell/module/az.MariaDb/Restore-AzMariaDBServerWith
+https://docs.microsoft.com/en-us/powershell/module/az.MariaDb/Restore-AzMariaDBServerWithGeo
 #>
-function Restore-AzMariaDBServer {
+function Restore-AzMariaDBServerWithGeo {
     [OutputType([Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.Api20180601Preview.IServer])]
     [CmdletBinding(DefaultParameterSetName='SourceServerId', PositionalBinding=$false, SupportsShouldProcess, ConfirmImpact='Medium')]
     [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Profile('latest-2019-04-30')]
@@ -57,6 +57,11 @@ function Restore-AzMariaDBServer {
         ${SubscriptionId},
     
         #region ServerForCreate
+        [Parameter()]
+        [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
+        [System.String]
+        # The location the resource resides in.
+        ${Location},
 
         [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
@@ -131,13 +136,7 @@ function Restore-AzMariaDBServer {
         ${Version},
         #endregion ServerForCreate
 
-
-        #region PointInTimeRestore
-        [Parameter(Mandatory)]
-        [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
-        [System.DateTime]
-        # The location the resource resides in.
-        ${RestorePointInTime},
+        #region GeoRestore
         #endregion
 
         #region HideField
@@ -205,21 +204,26 @@ function Restore-AzMariaDBServer {
     process {
         try {
             $Parameter = [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.Api20180601Preview.ServerForCreate]::new()
-            $Parameter.Property = [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.Api20180601Preview.ServerPropertiesForRestore]::new()
+            $Parameter.Property = [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.Api20180601Preview.ServerPropertiesForGeoRestore]::new()
 
             #region ServerForCreate
-            if ($PSBoundParameters.ContainsKey('SourceServerId')) {
-                $Parameter.Property.SourceServerId = $PSBoundParameters['SourceServerId']
-                
-                $FieldList = $PSBoundParameters['SourceServerId'].Split('/')
-                $InputObject = Get-AzMariadbServer -ResourceGroupName $FieldList[4] -ServerName $FieldList[8]
-                $PSBoundParameters.Remove('SourceServerId')
+            if ($PSBoundParameters.ContaineKey('Location')) {
+                $Parameter.Location = $PSBoundParameters['Location']
+                $Null = $PSBoundParameters.Remove('Location')
+            } else {
+                if ($PSBoundParameters.ContainsKey('SourceServerId')) {
+                    $Parameter.Property.SourceServerId = $PSBoundParameters['SourceServerId']
+                    
+                    $FieldList = $PSBoundParameters['SourceServerId'].Split('/')
+                    $InputObject = Get-AzMariadbServer -ResourceGroupName $FieldList[4] -ServerName $FieldList[8]
+                    $Null = $PSBoundParameters.Remove('SourceServerId')
+                }
+                if ($PSBoundParameters.ContainsKey('InputObject')) {
+                    $Parameter.Property.SourceServerId = $InputObject.Id
+                    $Null = $PSBoundParameters.Remove('InputObject')
+                }
+                $Parameter.Location = $InputObject.Location
             }
-            if ($PSBoundParameters.ContainsKey('InputObject')) {
-                $Parameter.Property.SourceServerId = $InputObject.Id
-                $PSBoundParameters.Remove('InputObject')
-            }
-            $Parameter.Location = $InputObject.Location
 
             if ($PSBoundParameters.ContainsKey('SkuCapacity')) {
                 $Parameter.SkuCapacity = $PSBoundParameters['SkuCapacity']
@@ -285,14 +289,9 @@ function Restore-AzMariaDBServer {
                 $PSBoundParameters.Remove('Version')
             }
             #endregion ServerForCreate
-    
-            if ($PSBoundParameters.ContainsKey('RestorePointInTime')) {
-                $Parameter.Property.RestorePointInTime = $RestorePointInTime
-                $PSBoundParameters.Remove('RestorePointInTime')
-            }
 
             $PSBoundParameters.Add('Parameter', $Parameter)
-
+    
             Az.MariaDb.internal\New-AzMariaDbServer @PSBoundParameters
           } catch {
               throw

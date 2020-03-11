@@ -1,5 +1,0 @@
-function Process-NewMariaDBServerParameter {
-    param(
-        
-    )
-}

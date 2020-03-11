@@ -81,10 +81,6 @@ directive:
       subject: VNetRule
   - where:
       subject: VNetRule
-      verb: Remove
-    hide: true
-  - where:
-      subject: VNetRule
       parameter-name: Parameter
     set:
       parameter-name: VNetRule
@@ -96,12 +92,8 @@ directive:
   - where:
       subject: VNetRule
       verb: New
-    hide: true
-
-# Server Replica
-  # - where:
-  #     subject: Replica
-  #   hide: true
+    set:
+      verb: Add
 
 # FirewallRule
   - where:
@@ -109,6 +101,11 @@ directive:
       parameter-name: Parameter
     set:
       parameter-name: FirewallRule
+  - where:
+      subject: FirewallRule
+      verb: New
+    set:
+      verb: Add
 
 # MariaDBConfiguration
   - where:
@@ -125,6 +122,10 @@ directive:
       verb: Update
       subject: Configuration
     hide: true
+  # - where:
+  #     verb: Get
+  #     subject: Configuration
+  #   hide: true
 
   - where:
       subject: LogFile|Database|LocationBasedPerformanceTier|CheckNameAvailability|ServerSecurityAlertPolicy

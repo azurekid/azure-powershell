@@ -64,6 +64,12 @@ function Update-AzMariaDbConfiguration {
         [System.String]
         # The name of the server.
         ${ServerName},
+
+        [Parameter(ParameterSetName='ServerId', Mandatory)]
+        [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
+        [System.String]
+        # The Id of the server.
+        ${ServerId},
     
         [Parameter(ParameterSetName='ServerName', Mandatory)]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Path')]
@@ -77,7 +83,7 @@ function Update-AzMariaDbConfiguration {
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Models.IMariaDbIdentity]
         # Identity Parameter
         # To construct, see NOTES section for INPUTOBJECT properties and create a hash table.
-        ${InputObject},
+        ${ServerObject},
     
         [Parameter()]
         [Microsoft.Azure.PowerShell.Cmdlets.MariaDb.Category('Body')]
@@ -157,9 +163,21 @@ function Update-AzMariaDbConfiguration {
         ${ProxyUseDefaultCredentials}
     )
     
-    
     process {
         try {
+            Import-Module (Join-Path $PSScriptRoot MariaDbUtils.psm1)
+            if ($PSBoundParameters.ContainsKey('ServerId')) {
+                $ServerId = $PSBoundParameters['ServerId']
+                $PSBoundParameters['ServerName'] = Get-ServerNameFromMariaDbId $ServerId
+                $PSBoundParameters['ResourceGroupName'] = Get-ResourceGroupNameFromMariaDbId $ServerId
+                $Null = $PSBoundParameters.Remove('ServerId')
+            } elseif ($PSBoundParameters.ContainsKey('ServerObject')) {
+                $ServerId = $PSBoundParameters['ServerObject'].Id
+                $PSBoundParameters['ServerName'] = Get-ServerNameFromMariaDbId $ServerId
+                $PSBoundParameters['ResourceGroupName'] = Get-ResourceGroupNameFromMariaDbId $ServerId
+                $Null = $PSBoundParameters.Remove('ServerObject')
+            }
+
             if ($PSBoundParameters.ContainsKey('Name')) {
                 $Configuration = [System.Collections.Hashtable]::new()
                 $Configuration.Add($Name, $Value)
